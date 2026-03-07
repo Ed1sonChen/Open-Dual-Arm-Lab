@@ -3,7 +3,7 @@
 > From two robot arms and a pile of cables to a living dual-arm research platform.
 
 <p align="center">
-  <img src="assets/images/overview.png" alt="dual-arm setup overview" width="60%">
+  <img src="Assets/images/overview.png" alt="dual-arm setup overview" width="60%">
 </p>
 
 <p align="center">

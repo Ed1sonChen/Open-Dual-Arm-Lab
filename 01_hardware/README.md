@@ -8,6 +8,10 @@ The goal is simple: build a reliable system that can grow into a platform for **
 
 ---
 
+<p align="center">
+  <img src="Assets/images/hardware.png" alt="dual-arm setup overview" width="60%">
+</p>
+
 ## ⚙️ What powers this setup?
 
 Our current platform is built around four core pieces:
