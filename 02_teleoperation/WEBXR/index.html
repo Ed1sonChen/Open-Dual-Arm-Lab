@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quest 3 to xArm6 6D Teleoperation</title>
+    <style>body { margin: 0; overflow: hidden; background-color: #222; color: white; text-align: center; font-family: sans-serif; }</style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Quest 3 6D Control Center</h1>
+    <p>Please open the website in Quest 3 and click ENTER VR button</p>
+    <script type="module">
+        import * as THREE from 'three';
+        import { VRButton } from 'three/addons/webxr/VRButton.js';
+ 
+        // ⚠️ change to to your own IP address！！！
+        const ws = new WebSocket('ws://IP address:8765');
+ 
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true;
+        document.body.appendChild(renderer.domElement);
+        document.body.appendChild(VRButton.createButton(renderer));
+ 
+        const xrControllers = {};
+ 
+        function onControllerConnected(event) {
+            const controllerGroup = event.target;
+            const inputSource = event.data;
+            if (inputSource && inputSource.gamepad) {
+                xrControllers[inputSource.handedness] = controllerGroup;
+            }
+        }
+ 
+        const controller1 = renderer.xr.getController(0);
+        controller1.addEventListener('connected', onControllerConnected);
+        scene.add(controller1);
+ 
+        const controller2 = renderer.xr.getController(1);
+        controller2.addEventListener('connected', onControllerConnected);
+        scene.add(controller2);
+ 
+        renderer.setAnimationLoop(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+                const payload = {};
+                const session = renderer.xr.getSession();
+                
+                if (session && session.inputSources) {
+                    for (const source of session.inputSources) {
+                        if (source.gamepad && source.handedness) {
+                            const group = xrControllers[source.handedness];
+                            if (group) {
+                                payload[source.handedness] = {
+                                    // grasp XYZ
+                                    position: {
+                                        x: group.position.x,
+                                        y: group.position.y,
+                                        z: group.position.z
+                                    },
+                                    // 🌟 (Quaternion)
+                                    quaternion: {
+                                        x: group.quaternion.x,
+                                        y: group.quaternion.y,
+                                        z: group.quaternion.z,
+                                        w: group.quaternion.w
+                                    },
+                                    trigger: source.gamepad.buttons[0]?.value || 0.0,
+                                    grip: source.gamepad.buttons[1]?.value || 0.0     
+                                };
+                            }
+                        }
+                    }
+                }
+ 
+                if (Object.keys(payload).length > 0) {
+                    ws.send(JSON.stringify(payload));
+                } else {
+                    ws.send(JSON.stringify({"status": "in_loop_but_no_controllers"}));
+                }
+            }
+            renderer.render(scene, camera);
+        });
+    </script>
+</body>
+</html>
+ 
