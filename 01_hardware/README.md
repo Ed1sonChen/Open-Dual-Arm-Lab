@@ -9,7 +9,7 @@ The goal is simple: build a reliable system that can grow into a platform for **
 ---
 
 <p align="center">
-  <img src="Assets/images/hardware.png" alt="dual-arm setup overview" width="60%">
+  <img src="../Assets/images/hardware.png" alt="hardware" width="50%">
 </p>
 
 ## ⚙️ What powers this setup?
