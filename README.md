@@ -1,89 +1,117 @@
 # 🤖 Open Dual-Arm Lab
 
-> Building a dual-arm robotics setup from scratch.
+> From two robot arms and a pile of cables to a living dual-arm research platform.
 
 <p align="center">
   <img src="assets/images/setup_overview.jpg" alt="dual-arm setup overview" width="85%">
 </p>
 
 <p align="center">
-  From hardware and networking to calibration, control, and future dual-arm intelligence.
+  <strong>Building a dual-arm robotics setup from scratch</strong><br>
+  hardware · teleoperation · data collection · and the road toward bimanual intelligence
 </p>
 
 ---
 
-## ✨ Overview
+## ✨ What is this repository?
 
-This repository documents the full process of building a **dual-arm robotics research platform from zero**.
+This repository is the public build record of a dual-arm robotics system coming to life.
 
-It is an open record of how a real robotic system comes together:
-from hardware setup, wiring, and workspace design to integration, calibration, control, and future experiments.
+It starts with the unglamorous but essential pieces:
+robot arms, grippers, networking, teleoperation, and data pipelines.
 
-This is not just a code repository.  
-It is a growing platform, a build log, and a foundation for future research.
+It grows toward something much bigger:
+a research platform for **bimanual manipulation**, **interactive data collection**, and future work in **perception, control, and learning**.
+
+This is not a polished end-state repository.
+
+It is the system **while it is being built**.
 
 ---
 
-## 🚀 Why this project?
+## 🚀 Why build a dual-arm platform from scratch?
 
-Many robotic systems stop at a single arm, a fixed view, or a single-shot demo.
+Because many robotic demos begin where the real engineering difficulty ends.
 
-We want to build something more capable:
+A final video may show a successful grasp, a coordinated motion, or a clean manipulation sequence.  
+What it usually hides is the much harder question:
 
-- two arms
-- shared workspace
-- physical interaction
-- future sensing and scanning
-- future manipulation and coordination
+**How do you actually build the platform that makes those experiments possible?**
 
-This repository captures that journey from the very beginning.
+A dual-arm system is not just “two single arms side by side.”  
+It requires:
+
+- shared physical workspace
+- reliable communication
+- teleoperation interfaces
+- synchronized data collection
+- room for future perception and learning modules
+- a system design that can evolve without collapsing under its own complexity
+
+This repository exists to document that process openly.
+
+---
+
+## 🧠 What are we building toward?
+
+At the moment, this project focuses on the engineering foundations of a dual-arm setup.
+
+Over time, it is intended to support research in:
+
+- **bimanual manipulation**
+- **teleoperated demonstrations**
+- **robot data collection**
+- **learning-based robot policies**
+
+In other words, today this repo is about infrastructure.  
+Soon it becomes a platform for experiments.  
+Eventually, it becomes a platform for ideas.
 
 ---
 
 ## 🗺️ Repository Map
 
 - [🔧 01_hardware](01_hardware/README.md)
-- [📐 02_teleoperation](02_teleoperation/README.md)
-- [🔌 03_data_collection](03_data_collection/README.md)
+- [🎮 02_teleoperation](02_teleoperation/README.md)
+- [📦 03_data_collection](03_data_collection/README.md)
 
 ---
 
 ## 📌 Current Status
 
-This project is actively under construction.
+This project is under active construction.
 
-Some parts are already assembled.  
-Some are being tested.  
-Some are still plans on paper.  
+The system is being developed in layers:
 
-That is exactly the point of this repository: to document the platform as it grows.
+- physical hardware
+- control and teleoperation
+- data collection infrastructure
+- future learning and experimentation
 
----
+Some modules are already working.  
+Some are partially integrated.  
+Some are still being designed.
 
-## 🌱 What this will become
+That is intentional.
 
-Over time, this setup is intended to support:
-
-- dual-arm manipulation
-- active perception
-- robotic scanning
-- grasping and reorientation
-- learning-based policies
-- future datasets, demos, and papers
+This repository is meant to capture the build **as a process**, not just as a finished artifact.
 
 ---
 
-## 📸 Follow the build
+## 📸 What you will find here
 
-This repo will gradually include:
+As the platform grows, this repository will gradually include:
 
-- photos
-- diagrams
+- setup photos
+- system diagrams
+- hardware notes
+- teleoperation workflows
+- data collection procedures
 - milestone demos
-- technical notes
-- build logs
+- technical decisions and build logs
 
-If you want to see how a dual-arm robotics platform is built from scratch, start here.
+The goal is to make the platform legible:  
+not only what was built, but also **why it was built this way**.
 
 ---
 
@@ -93,9 +121,21 @@ If you want to see how a dual-arm robotics platform is built from scratch, start
 
 ---
 
-## ⭐ Note
+## ⭐ A note on philosophy
 
-This is a living repository.
+Robotics systems do not appear fully formed.
 
-It is meant to show not only the final system, but also the process:
-the decisions, the structure, the iterations, and the build itself.
+They are assembled, tested, reconfigured, debugged, and rebuilt.  
+Every cable routing decision, every network choice, every operator interface, and every data format shapes what the system can eventually become.
+
+This repository is an attempt to treat those engineering decisions as first-class research infrastructure.
+
+Because before there is policy learning, there is setup.  
+Before there is autonomy, there is instrumentation.  
+Before there is intelligence, there is a system that works.
+
+---
+
+## 🌱 Follow the build
+
+If you are interested in how a real dual-arm robotics platform is designed from the ground up — not only at the level of ideas, but at the level of hardware, interfaces, and infrastructure — this repository is for you.
