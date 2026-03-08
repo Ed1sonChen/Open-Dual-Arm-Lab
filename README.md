@@ -58,9 +58,9 @@ At the moment, this project focuses on the engineering foundations of a dual-arm
 
 Over time, it is intended to support research in:
 
-- **bimanual manipulation**
 - **teleoperated demonstrations**
 - **robot data collection**
+- **bimanual manipulation**
 - **learning-based robot policies**
 
 In other words, today this repo is about infrastructure.  
@@ -74,6 +74,8 @@ Eventually, it becomes a platform for ideas.
 - [🔧 01_hardware](01_hardware/README.md)
 - [🎮 02_teleoperation](02_teleoperation/README.md)
 - [📦 03_data_collection](03_data_collection/README.md)
+- [⚙️ 04_single_task_models](04_single_task_models/README.md)
+- [🛠️ 05_generalist_models](05_generalist_models/README.md)
 
 ---
 
