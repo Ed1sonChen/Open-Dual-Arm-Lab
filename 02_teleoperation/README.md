@@ -120,14 +120,3 @@ Scroll to the bottom of the webpage
 Click ENTER VR
 
 🎉 You are now ready to teleoperate your robots!
-
----
-
-## 📂 Folder Structure
-
-```text
-02_teleoperation/
-├── README.md
-└── WEBXR/
-    ├── index.html
-    └── server.py
