@@ -20,15 +20,15 @@ from policy import ACTPolicy
 # =========================================================
 # 1. Config
 # =========================================================
-IP_LEFT = "192.168.1.204"
+IP_LEFT = ""
 
-FRONT_CAM_SERIAL = "336222076423"
-WRIST_CAM_SERIAL = "346522070903"
+FRONT_CAM_SERIAL = ""
+WRIST_CAM_SERIAL = ""
 
-FRONT_CAM_CONFIG_PATH = "dataset/raw/camera_calibration/front_336222076423.json"
-WRIST_CAM_CONFIG_PATH = "dataset/raw/camera_calibration/wrist_346522070903.json"
+FRONT_CAM_CONFIG_PATH = ""
+WRIST_CAM_CONFIG_PATH = ""
 
-CKPT_DIR = "./ckpts/xarm_flip_block_act"
+CKPT_DIR = ""
 CKPT_NAME = "policy_best.ckpt"
 
 ROLLOUT_ROOT = Path("./rollout_logs_act_official")
@@ -38,7 +38,7 @@ STATE_DIM = 7
 ACTION_DIM = 7
 
 IMAGE_SIZE = (480, 640)   # (H, W)
-CONTROL_HZ = 10.0         # 主控制循环（模型推理）频率
+CONTROL_HZ = 10.0         
 QUERY_FREQUENCY = 1       
 TEMPORAL_AGG = True
 CHUNK_SIZE = 20
@@ -114,7 +114,7 @@ def print_camera_config(cfg, label):
 
 
 # =========================================================
-# 3. RealSense (异步无阻塞多线程版本)
+# 3. RealSense 
 # =========================================================
 class RealSenseReader:
     def __init__(self, serial, width=640, height=480, fps=30, camera_name="camera", config_dict=None):
@@ -258,9 +258,7 @@ class XArmRolloutInterface:
         print("[INFO] Home reached.")
 
 
-# =========================================================
-# 异步高频伺服插值线程 (引入三次样条与惯性滑行容错)
-# =========================================================
+
 class AsyncServoController:
     def __init__(self, robot_interface, servo_hz=100.0, control_hz=10.0):
         self.robot = robot_interface
@@ -304,13 +302,11 @@ class AsyncServoController:
             q0 = self.current_joint.copy()
             v0 = self.current_vel.copy()
             q1 = np.array(target_joint, dtype=np.float64)
-            
-            # 估算 0.1s 后的终点速度，保持连续运动
+
             v1 = (q1 - q0) / self.control_dt
             
             self.trajectory_buffer = []
-            
-            # 生成 0.1s 内的三次多项式(Hermite Spline)轨迹点
+
             for i in range(1, self.steps_per_interval + 1):
                 t = i * self.dt
                 
@@ -336,9 +332,7 @@ class AsyncServoController:
                     self.current_joint = tgt_j
                     self.current_vel = tgt_v
                 else:
-                    # 惯性滑行：如果推理由于抖动慢了，保持平滑移动不急停
                     self.current_joint += self.current_vel * self.dt
-                    # 轻微衰减防止失控飞走
                     self.current_vel *= 0.95 
                 
                 tgt_g = self.target_gripper
@@ -509,7 +503,7 @@ def rollout():
                     recorder.start(ckpt_dir=CKPT_DIR, front_cfg_path=FRONT_CAM_CONFIG_PATH, wrist_cfg_path=WRIST_CAM_CONFIG_PATH)
                     if TEMPORAL_AGG: all_time_actions.zero_()
                     servo_controller.start(state["joint"], state["gripper_pos"])
-                    next_step_time = time.time() # 启动时重置绝对时钟
+                    next_step_time = time.time() 
             elif key == ord("s"):
                 if rollout_active:
                     servo_controller.stop() 
@@ -529,19 +523,16 @@ def rollout():
 
             if not rollout_active or paused:
                 time.sleep(0.02)
-                next_step_time = time.time() # 暂停期间保持时钟同步，防止解除暂停时暴走
+                next_step_time = time.time() 
                 continue
 
-            # ----------------------------------------------------
-            # 模型推理部分
-            # ----------------------------------------------------
+
             image = np.stack([preprocess_image_bgr_to_rgb_chw(front_bgr), preprocess_image_bgr_to_rgb_chw(wrist_bgr)], axis=0)
             image = torch.from_numpy(image).float().to(device).unsqueeze(0)
 
             qpos_numpy = pre_process(np.concatenate([joint, np.array([gripper_pos], dtype=np.float32)], axis=0))
             qpos = torch.from_numpy(qpos_numpy).float().to(device).unsqueeze(0)
 
-            # 逻辑嵌套修复，确保时序正确
             if step_idx % QUERY_FREQUENCY == 0:
                 all_actions = policy(qpos, image)  
                 if TEMPORAL_AGG:
@@ -556,7 +547,7 @@ def rollout():
                     raw_action = all_actions[:, 0]
                 else:
                     k = 0.01
-                    # 权重反转修复，让最新预测占主导
+
                     exp_weights = np.exp(-k * np.arange(len(actions_for_curr_step))[::-1])
                     exp_weights = exp_weights / exp_weights.sum()
                     exp_weights = torch.from_numpy(exp_weights).float().to(device).unsqueeze(dim=1)
@@ -573,23 +564,16 @@ def rollout():
 
             exec_joint, exec_gripper, _ = postprocess_action(pred_action, joint)
 
-            # ----------------------------------------------------
-            # 控制下发部分 (无阻塞，移交后台三次样条)
-            # ----------------------------------------------------
             servo_controller.update_target(exec_joint, exec_gripper)
 
             recorder.write_step(front_bgr, wrist_bgr, state, pred_chunk, exec_joint, exec_gripper, step_idx)
             step_idx += 1
 
-            # ----------------------------------------------------
-            # 绝对时钟对齐，消除系统累积漂移误差
-            # ----------------------------------------------------
             next_step_time += dt
             sleep_time = next_step_time - time.time()
             if sleep_time > 0:
                 time.sleep(sleep_time)
             else:
-                # 若 GPU 偶尔卡顿超时，重置目标时钟，防止下一帧疯狂快进
                 next_step_time = time.time() 
 
     finally:
